@@ -1,0 +1,31 @@
+#Python can be a powerful tool for implementing cybersecurity measures.
+#One common approach is to create a script for network monitoring and intrusion detection. 
+#Below is an example of a simple Python script using the 'scapy' library 
+#to monitor network traffic and detect suspicious activity
+
+#Have Fun. 
+
+import logging
+from scapy.all import *
+
+# Set logging level to suppress IPv6 warning
+logging.getLogger("scapy.runtime").setLevel(logging.ERROR)
+
+def packet_callback(packet):
+    if packet.haslayer(IP):
+        src_ip = packet[IP].src
+        dst_ip = packet[IP].dst
+
+        print(f"[*] Detected packet from {src_ip} to {dst_ip}")
+
+        # Perform checks for suspicious activity
+        if packet.haslayer(TCP):
+            # Check for TCP SYN packets (potential port scanning)
+            if packet[TCP].flags == 2:
+                print("[!] SYN packet detected - Potential port scanning!")
+
+        # Add more checks for other types of suspicious activity as needed
+
+# Start sniffing network traffic
+print("[*] Starting packet sniffer...")
+sniff(prn=packet_callback, store=0)
